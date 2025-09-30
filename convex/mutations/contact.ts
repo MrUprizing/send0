@@ -1,8 +1,9 @@
 import { v } from "convex/values";
-import { mutation } from "../_generated/server";
+import { mutation, internalMutation } from "../_generated/server";
+import { internal } from "../_generated/api";
 
 /**
- * Create a new contact associated with a form.
+ * Create a new contact associated with a form and trigger AI profile generation.
  */
 export const createContact = mutation({
   args: {
@@ -38,6 +39,43 @@ export const createContact = mutation({
       user_id,
       ...args,
     });
+
+    // Inicia el proceso de generación del perfil AI si hay source_url
+    if (args.source_url) {
+      await ctx.scheduler.runAfter(
+        0,
+        internal.actions.orchestador.processContact,
+        {
+          contactId,
+          url: args.source_url,
+        },
+      );
+    }
+
     return contactId;
+  },
+});
+
+/**
+ * Update contact status (internal use only)
+ */
+export const updateContactStatus = internalMutation({
+  args: {
+    contactId: v.id("contacts"),
+    status: v.union(
+      v.literal("new"),
+      v.literal("processing"),
+      v.literal("ready"),
+      v.literal("contacted"),
+      v.literal("responded"),
+    ),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.contactId, {
+      status: args.status,
+      updated_at: Date.now(),
+    });
+    return null;
   },
 });

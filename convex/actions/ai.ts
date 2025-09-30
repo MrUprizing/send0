@@ -3,9 +3,12 @@ import { generateObject } from "ai";
 import { v } from "convex/values";
 import { z } from "zod";
 import { internal } from "../_generated/api";
-import { action } from "../_generated/server";
+import { internalAction } from "../_generated/server";
 
-export const generateProfile = action({
+/**
+ * Genera el perfil AI usando el scraped_data y actualiza ai_profiles.
+ */
+export const generateProfile = internalAction({
   args: { contactId: v.id("contacts") },
   returns: v.null(),
   handler: async (ctx, args) => {
@@ -15,16 +18,15 @@ export const generateProfile = action({
     });
     if (!contact) throw new Error("Contact not found");
 
-    // Obtén el perfil AI y el scraped_data
+    // Obtén el ai_profile y el scraped_data
     const aiProfile = await ctx.runQuery(
       internal.queries.contacts.getProfileByContactId,
-      {
-        contactId: args.contactId,
-      },
+      { contactId: args.contactId },
     );
-    const scrapedData = aiProfile?.scraped_data ?? null;
+    if (!aiProfile) throw new Error("AI profile not found");
+    const scrapedData = aiProfile.scraped_data ?? null;
 
-    // Prepara el prompt incluyendo el scraped_data si existe
+    // Prepara el prompt
     const prompt = `Genera un perfil de ventas para este contacto. Devuelve un objeto JSON con los siguientes campos:
 - profile_analysis: resumen del perfil del contacto
 - industry: industria del contacto
@@ -50,8 +52,18 @@ Scraped data: ${JSON.stringify(scrapedData)}`;
       prompt,
     });
 
-    // Guarda el perfil
-    await ctx.runMutation();
+    // Actualiza el ai_profile con los datos generados
+    await ctx.runMutation(internal.mutations.profile.updateProfileAIFields, {
+      profileId: aiProfile._id,
+      profile_analysis: object.profile_analysis,
+      industry: object.industry,
+      email_subject: object.email_subject,
+      email_html_example: object.email_html_example,
+      tone_preference: object.tone_preference,
+      key_interests: object.key_interests,
+      processing_status: "completed",
+      updated_at: Date.now(),
+    });
 
     return null;
   },

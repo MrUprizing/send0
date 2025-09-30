@@ -8,12 +8,14 @@
  * @module
  */
 
+import type * as actions_ai from "../actions/ai.js";
+import type * as actions_firecrawl from "../actions/firecrawl.js";
+import type * as actions_orchestador from "../actions/orchestador.js";
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
 import type * as mutations_contact from "../mutations/contact.js";
 import type * as mutations_form from "../mutations/form.js";
-import type * as myactions_ai from "../myactions/ai.js";
-import type * as myactions_firecrawl from "../myactions/firecrawl.js";
+import type * as mutations_profile from "../mutations/profile.js";
 import type * as queries_contacts from "../queries/contacts.js";
 
 import type {
@@ -31,12 +33,14 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "actions/ai": typeof actions_ai;
+  "actions/firecrawl": typeof actions_firecrawl;
+  "actions/orchestador": typeof actions_orchestador;
   auth: typeof auth;
   http: typeof http;
   "mutations/contact": typeof mutations_contact;
   "mutations/form": typeof mutations_form;
-  "myactions/ai": typeof myactions_ai;
-  "myactions/firecrawl": typeof myactions_firecrawl;
+  "mutations/profile": typeof mutations_profile;
   "queries/contacts": typeof queries_contacts;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
