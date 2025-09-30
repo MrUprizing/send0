@@ -63,7 +63,6 @@ Make the analysis actionable and specific to this contact's context.`;
         key_interests: z.array(z.string()).optional(),
       }),
       prompt,
-      abortSignal: AbortSignal.timeout(30000),
     });
 
     // Actualiza el ai_profile con los datos generados

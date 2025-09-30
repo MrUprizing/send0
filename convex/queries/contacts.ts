@@ -1,5 +1,25 @@
 import { v } from "convex/values";
-import { internalQuery } from "../_generated/server";
+import { internalQuery, query } from "../_generated/server";
+import { paginationOptsValidator } from "convex/server";
+
+/**
+ * Get paginated contacts for the current user
+ */
+export const listContacts = query({
+  args: { 
+    userId: v.string(),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("contacts")
+      .withIndex("by_user_id_and_created_at", (q) => 
+        q.eq("user_id", args.userId)
+      )
+      .order("desc")
+      .paginate(args.paginationOpts);
+  },
+});
 
 /**
  * Get a contact by ID (internal use only)

@@ -7,7 +7,7 @@ export default defineSchema({
     form_id: v.id("forms"),
     email: v.string(),
     source_url: v.optional(v.string()),
-    additional_info: v.optional(v.string()), // texto largo
+    additional_info: v.optional(v.string()),
     image_url: v.optional(v.string()),
     source_type: v.union(
       v.literal("newsletter"),
@@ -21,13 +21,15 @@ export default defineSchema({
       v.literal("contacted"),
       v.literal("responded"),
     ),
-    created_at: v.number(), // Date.now()
+    created_at: v.number(),
     updated_at: v.number(),
-  }),
+  })
+    .index("by_user_id", ["user_id"])
+    .index("by_user_id_and_created_at", ["user_id", "created_at"]),
 
   forms: defineTable({
-    user_id: v.string(), // referencia al dueño
-    name: v.string(), // nombre interno ("Landing page form")
+    user_id: v.string(),
+    name: v.string(),
     description: v.optional(v.string()),
     created_at: v.number(),
   }),
@@ -49,4 +51,30 @@ export default defineSchema({
     created_at: v.number(),
     updated_at: v.number(),
   }).index("by_contact_id", ["contact_id"]),
+
+  mails: defineTable({
+    contact_id: v.id("contacts"),
+    ai_profile_id: v.id("ai_profiles"),
+    user_id: v.string(),
+    from_email: v.string(),
+    to_email: v.string(),
+    subject: v.string(),
+    html_content: v.string(),
+    user_prompt: v.string(), // Lo que el usuario escribió sobre el tema del email
+    send_status: v.union(
+      v.literal("draft"),
+      v.literal("generating"),
+      v.literal("ready"),
+      v.literal("sent"),
+      v.literal("failed"),
+    ),
+    resend_email_id: v.optional(v.string()), // ID de Resend cuando se envía
+    error_message: v.optional(v.string()),
+    sent_at: v.optional(v.number()),
+    created_at: v.number(),
+    updated_at: v.number(),
+  })
+    .index("by_contact_id", ["contact_id"])
+    .index("by_user_id", ["user_id"])
+    .index("by_send_status", ["send_status"]),
 });
