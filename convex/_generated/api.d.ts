@@ -12,6 +12,7 @@ import type * as actions_aiprofile from "../actions/aiprofile.js";
 import type * as actions_email from "../actions/email.js";
 import type * as actions_emailsender from "../actions/emailsender.js";
 import type * as actions_firecrawl from "../actions/firecrawl.js";
+import type * as actions_generateEmailFromProfile from "../actions/generateEmailFromProfile.js";
 import type * as actions_orchestador from "../actions/orchestador.js";
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
@@ -43,6 +44,7 @@ declare const fullApi: ApiFromModules<{
   "actions/email": typeof actions_email;
   "actions/emailsender": typeof actions_emailsender;
   "actions/firecrawl": typeof actions_firecrawl;
+  "actions/generateEmailFromProfile": typeof actions_generateEmailFromProfile;
   "actions/orchestador": typeof actions_orchestador;
   auth: typeof auth;
   http: typeof http;

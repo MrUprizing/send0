@@ -113,7 +113,7 @@ Make it professional, persuasive, and tailored to the contact's interests.`;
 
       // Llamar a la IA
       const { object } = await generateObject({
-        model: "openai/gpt-4o-mini",
+        model: "openai/gpt-5-mini",
         schema: z.object({
           from_email: z.string(),
           subject: z.string(),

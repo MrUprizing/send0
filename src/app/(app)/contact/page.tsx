@@ -13,10 +13,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { api } from "../../../../convex/_generated/api"; // Ajusta la ruta si es necesario
+import { api } from "../../../../convex/_generated/api";
+import type { Id } from "../../../../convex/_generated/dataModel";
 
 export default function ContactPage() {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<{
+    email: string;
+    source_url: string;
+    additional_info: string;
+    image_url: string;
+    source_type: "newsletter" | "sales" | "demo";
+    form_id: string;
+  }>({
     email: "",
     source_url: "",
     additional_info: "",
@@ -35,10 +43,12 @@ export default function ContactPage() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === "source_type") return;
+    setForm({ ...form, [name]: value });
   };
 
-  const handleSelect = (value: string) => {
+  const handleSelect = (value: "newsletter" | "sales" | "demo") => {
     setForm({ ...form, source_type: value });
   };
 
@@ -49,7 +59,7 @@ export default function ContactPage() {
     setError(null);
     try {
       await createContact({
-        form_id: form.form_id,
+        form_id: form.form_id as unknown as Id<"forms">,
         email: form.email,
         source_url: form.source_url || undefined,
         additional_info: form.additional_info || undefined,
@@ -68,8 +78,8 @@ export default function ContactPage() {
         source_type: "newsletter",
         form_id: "",
       });
-    } catch (err: any) {
-      setError(err.message || "Error al enviar el contacto");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Error al enviar el contacto");
     }
     setLoading(false);
   };

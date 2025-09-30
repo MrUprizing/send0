@@ -1,7 +1,10 @@
 "use client";
 
-import { usePaginatedQuery, useQuery } from "convex/react";
+import { usePaginatedQuery, useQuery, useAction } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import { useState } from "react";
+import type { Id } from "../../../../convex/_generated/dataModel";
+import { toast } from "sonner";
 
 import {
   Table,
@@ -12,6 +15,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function ContactPage() {
   const currentUser = useQuery(api.auth.getCurrentUser);
@@ -22,6 +34,49 @@ export default function ContactPage() {
     userId ? { userId } : "skip",
     { initialNumItems: 10 }
   );
+
+  const [selectedContactId, setSelectedContactId] = useState<Id<"contacts"> | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [userPrompt, setUserPrompt] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const generateEmail = useAction(api.actions.generateEmailFromProfile.generateEmailFromProfile);
+
+  const handleOpenDialog = (contactId: Id<"contacts">) => {
+    setSelectedContactId(contactId);
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedContactId(null);
+    setUserPrompt("");
+    setIsGenerating(false);
+  };
+
+  const handleGenerateAndSendEmail = async () => {
+    if (!userPrompt.trim() || !selectedContactId || !userId) {
+      toast.error("Por favor ingresa un mensaje");
+      return;
+    }
+
+    try {
+      setIsGenerating(true);
+      await generateEmail({
+        contactId: selectedContactId,
+        userPrompt: userPrompt.trim(),
+        userId,
+        sendImmediately: true,
+      });
+
+      toast.success("Email generado y enviado exitosamente");
+      handleCloseDialog();
+    } catch (error) {
+      console.error("Error generating email:", error);
+      toast.error(error instanceof Error ? error.message : "Error al generar el email");
+      setIsGenerating(false);
+    }
+  };
 
   if (!currentUser) {
     return (
@@ -116,6 +171,7 @@ export default function ContactPage() {
                   <TableHead className="font-semibold">Estado</TableHead>
                   <TableHead className="font-semibold">Origen</TableHead>
                   <TableHead className="font-semibold">Fecha</TableHead>
+                  <TableHead className="font-semibold text-right">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -147,6 +203,15 @@ export default function ContactPage() {
                     <TableCell className="text-sm text-muted-foreground">
                       {formatDate(contact.created_at)}
                     </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        onClick={() => handleOpenDialog(contact._id)}
+                        variant="outline"
+                        size="sm"
+                      >
+                        Generar Email
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -176,6 +241,44 @@ export default function ContactPage() {
           )}
         </div>
       )}
+
+      {/* Dialog for email generation */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Generar Email Personalizado</DialogTitle>
+            <DialogDescription>
+              Escribe el tema o propósito del email que quieres generar. La IA creará un email personalizado basado en el perfil del contacto.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <Textarea
+              placeholder="Ej: Quiero invitarlo a una demo de nuestro producto..."
+              value={userPrompt}
+              onChange={(e) => setUserPrompt(e.target.value)}
+              className="min-h-32"
+              disabled={isGenerating}
+            />
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={handleCloseDialog}
+              disabled={isGenerating}
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleGenerateAndSendEmail}
+              disabled={isGenerating || !userPrompt.trim()}
+            >
+              {isGenerating ? "Enviando..." : "Generar y Enviar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

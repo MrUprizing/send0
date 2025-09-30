@@ -122,3 +122,46 @@ export const updateMailSent = internalMutation({
     return null;
   },
 });
+
+/**
+ * Crea un nuevo mail con todo el contenido ya generado
+ */
+export const createMailComplete = internalMutation({
+  args: {
+    contactId: v.id("contacts"),
+    aiProfileId: v.id("ai_profiles"),
+    userId: v.string(),
+    fromEmail: v.string(),
+    toEmail: v.string(),
+    subject: v.string(),
+    htmlContent: v.string(),
+    userPrompt: v.string(),
+    sendStatus: v.union(
+      v.literal("draft"),
+      v.literal("generating"),
+      v.literal("ready"),
+      v.literal("sent"),
+      v.literal("failed"),
+    ),
+  },
+  returns: v.id("mails"),
+  handler: async (ctx, args) => {
+    const now = Date.now();
+
+    const mailId = await ctx.db.insert("mails", {
+      contact_id: args.contactId,
+      ai_profile_id: args.aiProfileId,
+      user_id: args.userId,
+      from_email: args.fromEmail,
+      to_email: args.toEmail,
+      subject: args.subject,
+      html_content: args.htmlContent,
+      user_prompt: args.userPrompt,
+      send_status: args.sendStatus,
+      created_at: now,
+      updated_at: now,
+    });
+
+    return mailId;
+  },
+});
