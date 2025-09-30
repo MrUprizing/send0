@@ -1,30 +1,40 @@
-"use client"
+"use client";
 
-import * as React from "react"
 import {
   AudioWaveform,
   BookOpen,
   Bot,
   Command,
+  Contact,
+  FormInput,
   Frame,
   GalleryVerticalEnd,
+  MailIcon,
   Map,
+  PanelBottomOpen,
   PieChart,
+  Rocket,
   Settings2,
   SquareTerminal,
-} from "lucide-react"
+} from "lucide-react";
+import type * as React from "react";
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
+import { NavMain } from "@/components/nav-main";
+import { NavProjects } from "@/components/nav-projects";
+import { NavUser } from "@/components/nav-user";
+import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import { Link } from "next-view-transitions";
 
 // This is sample data.
 const data = {
@@ -154,22 +164,55 @@ const data = {
       icon: Map,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" variant="floating" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <SidebarGroup>
+          <SidebarGroupLabel>Platform</SidebarGroupLabel>
+          <SidebarMenu>
+            <SidebarMenuButton tooltip="Dashboard" asChild>
+              <Link href="/dashboard">
+                <PanelBottomOpen className="mr-2 size-4" />
+                Dashboard
+              </Link>
+            </SidebarMenuButton>
+            <SidebarMenuButton tooltip="Contacts" asChild>
+              <Link href="/contacts">
+                <Contact className="mr-2 size-4" />
+                Contacts
+              </Link>
+            </SidebarMenuButton>
+            <SidebarMenuButton tooltip="Emails" asChild>
+              <Link href="/emails">
+                <MailIcon className="mr-2 size-4" />
+                Emails
+              </Link>
+            </SidebarMenuButton>
+            <SidebarMenuButton tooltip="Forms" asChild>
+              <Link href="/forms">
+                <FormInput className="mr-2 size-4" />
+                Forms
+              </Link>
+            </SidebarMenuButton>
+            <SidebarMenuButton tooltip="Not" asChild>
+              <Link href="not">
+                <Rocket className="mr-2 size-4" />
+                Not
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

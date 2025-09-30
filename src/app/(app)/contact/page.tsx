@@ -1,9 +1,9 @@
 "use client";
 
+import { useMutation } from "convex/react";
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -12,10 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-// Si usas Convex React, importa el hook adecuado:
-import { useMutation } from "convex/react";
-// import { api } from "@/convex/_generated/api";
+import { Textarea } from "@/components/ui/textarea";
+import { api } from "../../../../convex/_generated/api"; // Ajusta la ruta si es necesario
 
 export default function ContactPage() {
   const [form, setForm] = useState({
@@ -24,14 +22,15 @@ export default function ContactPage() {
     additional_info: "",
     image_url: "",
     source_type: "newsletter",
-    user_id: "",
+    form_id: "",
   });
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Mutation Convex para crear contacto
-  // const createContact = useMutation(api.contacts.createContact);
+  const createContact = useMutation(api.mutations.contact.createContact);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -47,36 +46,51 @@ export default function ContactPage() {
     e.preventDefault();
     setLoading(true);
     setSuccess(false);
+    setError(null);
     try {
-      // await createContact({
-      //   email: form.email,
-      //   source_url: form.source_url || undefined,
-      //   additional_info: form.additional_info || undefined,
-      //   image_url: form.image_url || undefined,
-      //   source_type: form.source_type,
-      //   user_id: form.user_id,
-      //   status: "new",
-      //   created_at: Date.now(),
-      //   updated_at: Date.now(),
-      // });
-      // setSuccess(true);
-      // setForm({
-      //   email: "",
-      //   source_url: "",
-      //   additional_info: "",
-      //   image_url: "",
-      //   source_type: "newsletter",
-      //   user_id: "",
-      // });
-    } catch (err) {
-      // Maneja el error aquí si lo deseas
+      await createContact({
+        form_id: form.form_id,
+        email: form.email,
+        source_url: form.source_url || undefined,
+        additional_info: form.additional_info || undefined,
+        image_url: form.image_url || undefined,
+        source_type: form.source_type,
+        status: "new",
+        created_at: Date.now(),
+        updated_at: Date.now(),
+      });
+      setSuccess(true);
+      setForm({
+        email: "",
+        source_url: "",
+        additional_info: "",
+        image_url: "",
+        source_type: "newsletter",
+        form_id: "",
+      });
+    } catch (err: any) {
+      setError(err.message || "Error al enviar el contacto");
     }
     setLoading(false);
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
+    <div className="flex min-h-screen items-center justify-center ">
       <form className="w-full max-w-md space-y-6 p-6" onSubmit={handleSubmit}>
+        <div>
+          <Label className="pb-2" htmlFor="form_id">
+            ID del formulario
+          </Label>
+          <Input
+            id="form_id"
+            name="form_id"
+            type="text"
+            placeholder="ID del formulario"
+            value={form.form_id}
+            onChange={handleChange}
+            required
+          />
+        </div>
         <div>
           <Label className="pb-2" htmlFor="email">
             Email
@@ -145,20 +159,6 @@ export default function ContactPage() {
             </SelectContent>
           </Select>
         </div>
-        <div>
-          <Label className="pb-2" htmlFor="user_id">
-            ID de usuario
-          </Label>
-          <Input
-            id="user_id"
-            name="user_id"
-            type="text"
-            placeholder="ID de usuario"
-            value={form.user_id}
-            onChange={handleChange}
-            required
-          />
-        </div>
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? "Enviando..." : "Enviar"}
         </Button>
@@ -167,6 +167,7 @@ export default function ContactPage() {
             ¡Contacto enviado correctamente!
           </p>
         )}
+        {error && <p className="text-red-600 text-center mt-2">{error}</p>}
       </form>
     </div>
   );

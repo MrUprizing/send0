@@ -25,7 +25,6 @@ export default defineSchema({
     updated_at: v.number(),
   }),
 
-  // Formularios creados por cada usuario
   forms: defineTable({
     user_id: v.string(), // referencia al dueño
     name: v.string(), // nombre interno ("Landing page form")
@@ -35,12 +34,12 @@ export default defineSchema({
 
   ai_profiles: defineTable({
     contact_id: v.id("contacts"),
-    scraped_data: v.any(), // JSON sin restricción
+    scraped_data: v.optional(v.any()),
     profile_analysis: v.optional(v.string()),
     industry: v.optional(v.string()),
     email_subject: v.optional(v.string()),
     email_html_example: v.optional(v.string()),
-    tone_preference: v.optional(v.string()), // formal, casual, etc
+    tone_preference: v.optional(v.string()),
     key_interests: v.optional(v.array(v.string())),
     processing_status: v.union(
       v.literal("pending"),
@@ -49,5 +48,5 @@ export default defineSchema({
     ),
     created_at: v.number(),
     updated_at: v.number(),
-  }),
+  }).index("by_contact_id", ["contact_id"]),
 });

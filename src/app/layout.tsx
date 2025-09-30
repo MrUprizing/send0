@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { ViewTransitions } from "next-view-transitions";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ViewTransitions } from "next-view-transitions";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
