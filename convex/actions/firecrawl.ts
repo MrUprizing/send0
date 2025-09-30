@@ -22,6 +22,7 @@ export const crawlContact = internalAction({
     const crawlResponse = await firecrawl.crawl(args.url, {
       limit: 2,
       scrapeOptions: { formats: ["markdown"] },
+      timeout: 15000,
     });
 
     // Busca si ya existe el ai_profile para este contacto

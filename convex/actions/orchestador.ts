@@ -21,7 +21,7 @@ export const processContact = internalAction({
       });
 
       // Paso 2: Generar el perfil AI con los datos scrapeados
-      await ctx.runAction(internal.actions.ai.generateProfile, {
+      await ctx.runAction(internal.actions.aiprofile.generateProfile, {
         contactId: args.contactId,
       });
 

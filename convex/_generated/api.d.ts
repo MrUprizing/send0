@@ -8,7 +8,7 @@
  * @module
  */
 
-import type * as actions_ai from "../actions/ai.js";
+import type * as actions_aiprofile from "../actions/aiprofile.js";
 import type * as actions_firecrawl from "../actions/firecrawl.js";
 import type * as actions_orchestador from "../actions/orchestador.js";
 import type * as auth from "../auth.js";
@@ -33,7 +33,7 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  "actions/ai": typeof actions_ai;
+  "actions/aiprofile": typeof actions_aiprofile;
   "actions/firecrawl": typeof actions_firecrawl;
   "actions/orchestador": typeof actions_orchestador;
   auth: typeof auth;
