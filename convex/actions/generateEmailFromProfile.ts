@@ -33,6 +33,11 @@ export const generateEmailFromProfile = action({
         "SENDER_EMAIL environment variable is not configured. Please set it in your Convex dashboard.",
       );
     }
+
+    // Validate email format (must be in a verified domain for Resend)
+    if (!senderEmail.includes("@")) {
+      throw new Error("SENDER_EMAIL must be a valid email address");
+    }
     // Get the contact
     const contact = await ctx.runQuery(internal.queries.contacts.getContact, {
       contactId: args.contactId,
@@ -101,8 +106,8 @@ Make it highly personalized, persuasive, and tailored to this specific contact's
       prompt,
     });
 
-    // Use only the sender email (without name)
-    const fromEmail = senderEmail;
+    // Format the "from" email correctly for Resend: "Name <email@domain.com>"
+    const fromEmail = `${senderName} <${senderEmail}>`;
 
     // Create the mail record with the generated content
     const mailId: Id<"mails"> = await ctx.runMutation(

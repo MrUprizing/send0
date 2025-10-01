@@ -58,6 +58,21 @@ export const generateEmailContent = internalAction({
   returns: v.null(),
   handler: async (ctx, args): Promise<null> => {
     try {
+      // Get sender email from environment variable
+      const senderEmail = process.env.SENDER_EMAIL;
+      const senderName = process.env.SENDER_NAME || "Sales Team";
+
+      if (!senderEmail) {
+        throw new Error(
+          "SENDER_EMAIL environment variable is not configured. Please set it in your Convex dashboard.",
+        );
+      }
+
+      // Validate email format (must be in a verified domain for Resend)
+      if (!senderEmail.includes("@")) {
+        throw new Error("SENDER_EMAIL must be a valid email address");
+      }
+
       // Obtener el mail
       const mail = await ctx.runQuery(internal.queries.mail.getMailById, {
         mailId: args.mailId,
@@ -99,9 +114,8 @@ User's Email Topic/Request:
 ${mail.user_prompt}
 
 Generate a complete email with:
-1. from_email: Use the format "Sender Name <sender@domain.com>" (use a professional sender name based on the context)
-2. subject: A compelling subject line that fits the user's request and the contact's profile
-3. html_content: A professional HTML email that:
+1. subject: A compelling subject line that fits the user's request and the contact's profile
+2. html_content: A professional HTML email that:
    - Is personalized to the contact
    - Addresses the topic the user requested
    - Uses the recommended tone
@@ -115,7 +129,6 @@ Make it professional, persuasive, and tailored to the contact's interests.`;
       const { object } = await generateObject({
         model: "openai/gpt-5-mini",
         schema: z.object({
-          from_email: z.string(),
           subject: z.string(),
           html_content: z.string(),
         }),
@@ -123,10 +136,13 @@ Make it professional, persuasive, and tailored to the contact's interests.`;
         abortSignal: AbortSignal.timeout(30000),
       });
 
+      // Format the "from" email correctly for Resend: "Name <email@domain.com>"
+      const fromEmail = `${senderName} <${senderEmail}>`;
+
       // Actualizar el mail con el contenido generado
       await ctx.runMutation(internal.mutations.mail.updateMailContent, {
         mailId: args.mailId,
-        fromEmail: object.from_email,
+        fromEmail: fromEmail,
         subject: object.subject,
         htmlContent: object.html_content,
         sendStatus: "ready",
