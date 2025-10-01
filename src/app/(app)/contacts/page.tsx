@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Table,
   TableBody,
@@ -22,7 +22,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { api } from "../../../../convex/_generated/api";
 import type { Id } from "../../../../convex/_generated/dataModel";
 
@@ -168,7 +167,9 @@ export default function ContactPage() {
         <div className="max-w-7xl mx-auto">
           {status === "LoadingFirstPage" ? (
             <div className="flex items-center justify-center py-20">
-              <p className="text-sm text-muted-foreground">Loading contacts...</p>
+              <p className="text-sm text-muted-foreground">
+                Loading contacts...
+              </p>
             </div>
           ) : results.length === 0 ? (
             <div className="flex items-center justify-center py-20">
@@ -214,7 +215,9 @@ export default function ContactPage() {
                               {contact.source_url}
                             </a>
                           ) : (
-                            <span className="text-sm text-muted-foreground">-</span>
+                            <span className="text-sm text-muted-foreground">
+                              -
+                            </span>
                           )}
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">

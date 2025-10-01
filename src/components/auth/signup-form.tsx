@@ -1,5 +1,5 @@
 "use client";
-import { GalleryVerticalEnd } from "lucide-react";
+import { IconMailAi } from "@tabler/icons-react";
 import { Link } from "next-view-transitions";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -46,30 +46,30 @@ export function SignUpForm({
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
-            <a
-              href="#"
+            <Link
+              href="/"
               className="flex flex-col items-center gap-2 font-medium"
             >
               <div className="flex size-8 items-center justify-center rounded-md">
-                <GalleryVerticalEnd className="size-6" />
+                <IconMailAi className="size-12" />
               </div>
-              <span className="sr-only">Acme Inc.</span>
-            </a>
-            <h1 className="text-xl font-bold">Bienvenido a Acme Inc.</h1>
+              <span className="sr-only">Send0</span>
+            </Link>
+            <h1 className="text-xl font-bold">Welcome to Send0</h1>
             <div className="text-center text-sm">
-              ¿Ya tienes una cuenta?{" "}
-              <a href="#" className="underline underline-offset-4">
-                Inicia sesión
-              </a>
+              Already have an account?{" "}
+              <Link href="/login" className="underline underline-offset-4">
+                Login
+              </Link>
             </div>
           </div>
           <div className="flex flex-col gap-6">
             <div className="grid gap-3">
-              <Label htmlFor="name">Nombre</Label>
+              <Label htmlFor="name">Name</Label>
               <Input
                 id="name"
                 type="text"
-                placeholder="Tu nombre"
+                placeholder="Your name"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -80,18 +80,18 @@ export function SignUpForm({
               <Input
                 id="email"
                 type="email"
-                placeholder="m@example.com"
+                placeholder="you@example.com"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="password">Contraseña</Label>
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Mínimo 8 caracteres"
+                placeholder="Minimum 8 characters"
                 required
                 minLength={8}
                 value={password}
@@ -99,13 +99,13 @@ export function SignUpForm({
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Registrando..." : "Registrarse"}
+              {loading ? "Registering..." : "Sign up"}
             </Button>
           </div>
         </div>
       </form>
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        by <Link href="/"> MrUprizing</Link>
+        by <Link href="https://www.uprizing.me/"> MrUprizing</Link>
       </div>
     </div>
   );

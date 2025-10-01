@@ -54,7 +54,7 @@ export const generateEmailFromProfile = action({
     }
 
     // Prepare the prompt for the AI
-    const prompt = `You are a professional email writer specialized in personalized outreach. Generate a highly personalized email based on the following information if you don't know about x data not use:
+    const prompt = `You are a professional email writer specialized in personalized outreach. Generate a highly personalized email based on the following information if you don't know about x data. Use colors and custom styles:
 
 Contact Information:
 - Email: ${contact.email}

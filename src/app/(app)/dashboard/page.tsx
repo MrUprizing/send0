@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "convex/react";
-import { Contact, Mail, FileText } from "lucide-react";
+import { Contact, FileText, Mail } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
@@ -104,7 +104,9 @@ export default function DashboardPage() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Forms</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Total Forms
+                </CardTitle>
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -142,14 +144,21 @@ export default function DashboardPage() {
                     <TableHeader>
                       <TableRow className="bg-muted/50">
                         <TableHead className="font-semibold">Contact</TableHead>
-                        <TableHead className="font-semibold">Industry</TableHead>
+                        <TableHead className="font-semibold">
+                          Industry
+                        </TableHead>
                         <TableHead className="font-semibold">Status</TableHead>
-                        <TableHead className="font-semibold">Created At</TableHead>
+                        <TableHead className="font-semibold">
+                          Created At
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {aiProfiles.map((profile) => (
-                        <TableRow key={profile._id} className="hover:bg-muted/30">
+                        <TableRow
+                          key={profile._id}
+                          className="hover:bg-muted/30"
+                        >
                           <TableCell className="font-medium">
                             {profile.contactEmail}
                           </TableCell>

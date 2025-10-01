@@ -1,7 +1,7 @@
 "use client";
 
-import { LogOut } from "lucide-react";
 import { useQuery } from "convex/react";
+import { LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,8 +9,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { api } from "../../convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
+import { api } from "../../convex/_generated/api";
 
 export function NavUser() {
   const currentUser = useQuery(api.auth.getCurrentUser);
@@ -55,7 +55,10 @@ export function NavUser() {
       <SidebarMenuItem>
         <div className="flex items-center gap-2 px-2 py-1.5">
           <Avatar className="h-8 w-8 rounded-lg">
-            <AvatarImage src={currentUser.image || ""} alt={currentUser.name || ""} />
+            <AvatarImage
+              src={`https://avatar.vercel.sh/${currentUser.name}.svg`}
+              alt={currentUser.name || ""}
+            />
             <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
           </Avatar>
           <div className="grid flex-1 text-left text-sm leading-tight">

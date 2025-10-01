@@ -1,5 +1,7 @@
 "use client";
+import { IconMailAi } from "@tabler/icons-react";
 import { GalleryVerticalEnd } from "lucide-react";
+import { Link } from "next-view-transitions";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,16 +51,16 @@ export function LoginForm({
               className="flex flex-col items-center gap-2 font-medium"
             >
               <div className="flex size-8 items-center justify-center rounded-md">
-                <GalleryVerticalEnd className="size-6" />
+                <IconMailAi className="size-12" />
               </div>
-              <span className="sr-only">Acme Inc.</span>
+              <span className="sr-only">Send0</span>
             </a>
-            <h1 className="text-xl font-bold">Bienvenido a Acme Inc.</h1>
+            <h1 className="text-xl font-bold">Welcome to Send0</h1>
             <div className="text-center text-sm">
-              ¿No tienes una cuenta?{" "}
-              <a href="#" className="underline underline-offset-4">
-                Regístrate
-              </a>
+              Don't have an account?{" "}
+              <Link href="/sign-up" className="underline underline-offset-4">
+                Sign Up
+              </Link>
             </div>
           </div>
           <div className="flex flex-col gap-6">
@@ -74,11 +76,11 @@ export function LoginForm({
               />
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="password">Contraseña</Label>
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Tu contraseña"
+                placeholder="Your password"
                 required
                 minLength={8}
                 value={password}
@@ -92,8 +94,7 @@ export function LoginForm({
         </div>
       </form>
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        Al continuar, aceptas nuestros <a href="#">Términos de servicio</a> y{" "}
-        <a href="#">Política de privacidad</a>.
+        by <Link href="https://www.uprizing.me/"> MrUprizing</Link>
       </div>
     </div>
   );

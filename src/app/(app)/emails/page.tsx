@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Table,
   TableBody,
@@ -17,7 +18,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { api } from "../../../../convex/_generated/api";
 
 export default function EmailsPage() {
@@ -27,12 +27,12 @@ export default function EmailsPage() {
   const { results, status, loadMore } = usePaginatedQuery(
     api.queries.mail.listEmails,
     userId ? { userId } : "skip",
-    { initialNumItems: 10 }
+    { initialNumItems: 10 },
   );
 
-  const [selectedEmailContent, setSelectedEmailContent] = useState<string | null>(
-    null
-  );
+  const [selectedEmailContent, setSelectedEmailContent] = useState<
+    string | null
+  >(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleViewEmail = (htmlContent: string) => {
@@ -137,7 +137,9 @@ export default function EmailsPage() {
                         <TableCell className="max-w-md truncate">
                           {email.subject}
                         </TableCell>
-                        <TableCell>{getStatusBadge(email.send_status)}</TableCell>
+                        <TableCell>
+                          {getStatusBadge(email.send_status)}
+                        </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
                           {formatDate(email.sent_at || email.created_at)}
                         </TableCell>

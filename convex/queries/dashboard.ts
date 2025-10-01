@@ -18,33 +18,37 @@ export const getDashboardStats = query({
     if (!identity) {
       throw new Error("Not authenticated");
     }
-    
+
     const userId = identity.subject;
-    
+
     // Get total contacts
     const contacts = await ctx.db
       .query("contacts")
       .withIndex("by_user_id", (q) => q.eq("user_id", userId))
       .collect();
-    
+
     // Get total emails
     const emails = await ctx.db
       .query("mails")
       .withIndex("by_user_id", (q) => q.eq("user_id", userId))
       .collect();
-    
+
     // Get total forms
     const forms = await ctx.db
       .query("forms")
       .filter((q) => q.eq(q.field("user_id"), userId))
       .collect();
-    
+
     // Count emails sent
-    const emailsSent = emails.filter((email) => email.send_status === "sent").length;
-    
+    const emailsSent = emails.filter(
+      (email) => email.send_status === "sent",
+    ).length;
+
     // Count contacts ready
-    const contactsReady = contacts.filter((contact) => contact.status === "ready").length;
-    
+    const contactsReady = contacts.filter(
+      (contact) => contact.status === "ready",
+    ).length;
+
     return {
       totalContacts: contacts.length,
       totalEmails: emails.length,
@@ -70,39 +74,37 @@ export const getRecentAiProfiles = query({
       processing_status: v.union(
         v.literal("pending"),
         v.literal("completed"),
-        v.literal("failed")
+        v.literal("failed"),
       ),
       created_at: v.number(),
       contactEmail: v.string(),
-    })
+    }),
   ),
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Not authenticated");
     }
-    
+
     const userId = identity.subject;
-    
+
     // Get all contacts for this user
     const contacts = await ctx.db
       .query("contacts")
       .withIndex("by_user_id", (q) => q.eq("user_id", userId))
       .collect();
-    
+
     const contactIds = contacts.map((c) => c._id);
-    
+
     // Get AI profiles for these contacts
-    const aiProfiles = await ctx.db
-      .query("ai_profiles")
-      .collect();
-    
+    const aiProfiles = await ctx.db.query("ai_profiles").collect();
+
     // Filter and map AI profiles
     const userAiProfiles = aiProfiles
       .filter((profile) => contactIds.includes(profile.contact_id))
       .sort((a, b) => b.created_at - a.created_at)
       .slice(0, 10);
-    
+
     // Enrich with contact email
     const enrichedProfiles = [];
     for (const profile of userAiProfiles) {
@@ -120,8 +122,7 @@ export const getRecentAiProfiles = query({
         });
       }
     }
-    
+
     return enrichedProfiles;
   },
 });
-

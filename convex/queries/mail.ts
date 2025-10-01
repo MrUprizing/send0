@@ -1,6 +1,6 @@
+import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import { internalQuery, query } from "../_generated/server";
-import { paginationOptsValidator } from "convex/server";
 
 /**
  * Query interna para obtener un mail por ID

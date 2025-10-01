@@ -1,6 +1,8 @@
 "use client";
 import { useQuery } from "convex/react";
+import { Link } from "next-view-transitions";
 import { CreateFormDialog } from "@/components/create-form";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Table,
   TableBody,
@@ -9,7 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { api } from "../../../../convex/_generated/api";
 
 export default function FormsPage() {
@@ -57,6 +58,9 @@ export default function FormsPage() {
                     <TableHead className="font-semibold text-right">
                       Form ID
                     </TableHead>
+                    <TableHead className="font-semibold text-right">
+                      Go to Form
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -81,6 +85,16 @@ export default function FormsPage() {
                         <code className="text-xs bg-muted px-2 py-1 rounded font-mono">
                           {form._id}
                         </code>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Link
+                          href={`/form?formid=${form._id}`}
+                          className="text-primary underline underline-offset-2 hover:text-primary/80 transition"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Open
+                        </Link>
                       </TableCell>
                     </TableRow>
                   ))}
