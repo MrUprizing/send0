@@ -61,6 +61,9 @@ export default function FormsPage() {
                     <TableHead className="font-semibold text-right">
                       Go to Form
                     </TableHead>
+                    <TableHead className="font-semibold text-right">
+                      Go to Vapi
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -89,6 +92,16 @@ export default function FormsPage() {
                       <TableCell className="text-right">
                         <Link
                           href={`/form?formid=${form._id}`}
+                          className="text-primary underline underline-offset-2 hover:text-primary/80 transition"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Open
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Link
+                          href={`/vapi?formid=${form._id}`}
                           className="text-primary underline underline-offset-2 hover:text-primary/80 transition"
                           target="_blank"
                           rel="noopener noreferrer"
