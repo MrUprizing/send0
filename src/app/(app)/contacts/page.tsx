@@ -1,19 +1,8 @@
 "use client";
 
-import { usePaginatedQuery, useQuery, useAction } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
+import { useAction, usePaginatedQuery, useQuery } from "convex/react";
 import { useState } from "react";
-import type { Id } from "../../../../convex/_generated/dataModel";
 import { toast } from "sonner";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,7 +12,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { api } from "../../../../convex/_generated/api";
+import type { Id } from "../../../../convex/_generated/dataModel";
 
 export default function ContactPage() {
   const currentUser = useQuery(api.auth.getCurrentUser);
@@ -32,15 +33,18 @@ export default function ContactPage() {
   const { results, status, loadMore } = usePaginatedQuery(
     api.queries.contacts.listContacts,
     userId ? { userId } : "skip",
-    { initialNumItems: 10 }
+    { initialNumItems: 10 },
   );
 
-  const [selectedContactId, setSelectedContactId] = useState<Id<"contacts"> | null>(null);
+  const [selectedContactId, setSelectedContactId] =
+    useState<Id<"contacts"> | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [userPrompt, setUserPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const generateEmail = useAction(api.actions.generateEmailFromProfile.generateEmailFromProfile);
+  const generateEmail = useAction(
+    api.actions.generateEmailFromProfile.generateEmailFromProfile,
+  );
 
   const handleOpenDialog = (contactId: Id<"contacts">) => {
     setSelectedContactId(contactId);
@@ -56,7 +60,7 @@ export default function ContactPage() {
 
   const handleGenerateAndSendEmail = async () => {
     if (!userPrompt.trim() || !selectedContactId || !userId) {
-      toast.error("Por favor ingresa un mensaje");
+      toast.error("Please enter a message");
       return;
     }
 
@@ -69,11 +73,13 @@ export default function ContactPage() {
         sendImmediately: true,
       });
 
-      toast.success("Email generado y enviado exitosamente");
+      toast.success("Email generated and sent successfully");
       handleCloseDialog();
     } catch (error) {
       console.error("Error generating email:", error);
-      toast.error(error instanceof Error ? error.message : "Error al generar el email");
+      toast.error(
+        error instanceof Error ? error.message : "Error al generar el email",
+      );
       setIsGenerating(false);
     }
   };
@@ -81,7 +87,9 @@ export default function ContactPage() {
   if (!currentUser) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-sm text-muted-foreground">Por favor inicia sesión para ver tus contactos</p>
+        <p className="text-sm text-muted-foreground">
+          Please log in to view your contacts
+        </p>
       </div>
     );
   }
@@ -96,11 +104,11 @@ export default function ContactPage() {
     };
 
     const statusLabels: Record<string, string> = {
-      new: "Nuevo",
-      processing: "Procesando",
-      ready: "Listo",
-      contacted: "Contactado",
-      responded: "Respondido",
+      new: "New",
+      processing: "Processing",
+      ready: "Ready",
+      contacted: "Contacted",
+      responded: "Responded",
     };
 
     return (
@@ -119,7 +127,7 @@ export default function ContactPage() {
 
     const sourceLabels: Record<string, string> = {
       newsletter: "Newsletter",
-      sales: "Ventas",
+      sales: "Sales",
       demo: "Demo",
     };
 
@@ -131,7 +139,7 @@ export default function ContactPage() {
   };
 
   const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleDateString("es-ES", {
+    return new Date(timestamp).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -141,120 +149,133 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-12">
+    <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="mb-10">
-        <h1 className="text-3xl font-semibold tracking-tight mb-2">Contactos</h1>
-        <p className="text-sm text-muted-foreground">
-          Gestiona y visualiza todos tus contactos
-        </p>
+      <div className="px-8 py-6 border-b">
+        <div className="max-w-7xl mx-auto space-y-2">
+          <SidebarTrigger className="-ml-1" />
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Contacts</h1>
+            <p className="text-muted-foreground mt-1">
+              Manage and view all your contacts.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Content */}
-      {status === "LoadingFirstPage" ? (
-        <div className="flex items-center justify-center py-20">
-          <p className="text-sm text-muted-foreground">Cargando contactos...</p>
-        </div>
-      ) : results.length === 0 ? (
-        <div className="flex items-center justify-center py-20">
-          <p className="text-sm text-muted-foreground">No tienes contactos aún</p>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {/* Table */}
-          <div className="border rounded-lg overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-muted/50">
-                  <TableHead className="font-semibold">Email</TableHead>
-                  <TableHead className="font-semibold">Tipo</TableHead>
-                  <TableHead className="font-semibold">Estado</TableHead>
-                  <TableHead className="font-semibold">Origen</TableHead>
-                  <TableHead className="font-semibold">Fecha</TableHead>
-                  <TableHead className="font-semibold text-right">Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {results.map((contact) => (
-                  <TableRow key={contact._id} className="hover:bg-muted/30">
-                    <TableCell className="font-medium">
-                      {contact.email}
-                    </TableCell>
-                    <TableCell>
-                      {getSourceTypeBadge(contact.source_type)}
-                    </TableCell>
-                    <TableCell>
-                      {getStatusBadge(contact.status)}
-                    </TableCell>
-                    <TableCell className="max-w-xs truncate">
-                      {contact.source_url ? (
-                        <a
-                          href={contact.source_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-                        >
-                          {contact.source_url}
-                        </a>
-                      ) : (
-                        <span className="text-sm text-muted-foreground">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {formatDate(contact.created_at)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        onClick={() => handleOpenDialog(contact._id)}
-                        variant="outline"
-                        size="sm"
-                      >
-                        Generar Email
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          {/* Load More Button */}
-          {status === "CanLoadMore" && (
-            <div className="flex justify-center pt-2">
-              <Button
-                onClick={() => loadMore(10)}
-                variant="ghost"
-                className="text-sm"
-                disabled={status !== "CanLoadMore"}
-              >
-                Cargar más
-              </Button>
+      <div className="flex-1 px-8 py-6">
+        <div className="max-w-7xl mx-auto">
+          {status === "LoadingFirstPage" ? (
+            <div className="flex items-center justify-center py-20">
+              <p className="text-sm text-muted-foreground">Loading contacts...</p>
             </div>
-          )}
-
-          {status === "LoadingMore" && (
-            <div className="flex justify-center pt-2">
+          ) : results.length === 0 ? (
+            <div className="flex items-center justify-center py-20">
               <p className="text-sm text-muted-foreground">
-                Cargando más contactos...
+                You have no contacts yet
               </p>
             </div>
+          ) : (
+            <div className="space-y-6">
+              {/* Table */}
+              <div className="border rounded-lg overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/50">
+                      <TableHead className="font-semibold">Email</TableHead>
+                      <TableHead className="font-semibold">Type</TableHead>
+                      <TableHead className="font-semibold">Status</TableHead>
+                      <TableHead className="font-semibold">Source</TableHead>
+                      <TableHead className="font-semibold">Date</TableHead>
+                      <TableHead className="font-semibold text-right">
+                        Actions
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {results.map((contact) => (
+                      <TableRow key={contact._id} className="hover:bg-muted/30">
+                        <TableCell className="font-medium">
+                          {contact.email}
+                        </TableCell>
+                        <TableCell>
+                          {getSourceTypeBadge(contact.source_type)}
+                        </TableCell>
+                        <TableCell>{getStatusBadge(contact.status)}</TableCell>
+                        <TableCell className="max-w-xs truncate">
+                          {contact.source_url ? (
+                            <a
+                              href={contact.source_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sm text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                            >
+                              {contact.source_url}
+                            </a>
+                          ) : (
+                            <span className="text-sm text-muted-foreground">-</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          {formatDate(contact.created_at)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            onClick={() => handleOpenDialog(contact._id)}
+                            variant="outline"
+                            size="sm"
+                          >
+                            Generate Email
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Load More Button */}
+              {status === "CanLoadMore" && (
+                <div className="flex justify-center pt-2">
+                  <Button
+                    onClick={() => loadMore(10)}
+                    variant="ghost"
+                    className="text-sm"
+                    disabled={status !== "CanLoadMore"}
+                  >
+                    Load more
+                  </Button>
+                </div>
+              )}
+
+              {status === "LoadingMore" && (
+                <div className="flex justify-center pt-2">
+                  <p className="text-sm text-muted-foreground">
+                    Loading more contacts...
+                  </p>
+                </div>
+              )}
+            </div>
           )}
         </div>
-      )}
+      </div>
 
       {/* Dialog for email generation */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Generar Email Personalizado</DialogTitle>
+            <DialogTitle>Generate Custom Email</DialogTitle>
             <DialogDescription>
-              Escribe el tema o propósito del email que quieres generar. La IA creará un email personalizado basado en el perfil del contacto.
+              Write the subject or purpose of the email you want to generate.
+              The AI will create a personalized email based on the contact's
+              profile.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="py-4">
             <Textarea
-              placeholder="Ej: Quiero invitarlo a una demo de nuestro producto..."
+              placeholder="E.g.: I want to invite them to a demo of our product..."
               value={userPrompt}
               onChange={(e) => setUserPrompt(e.target.value)}
               className="min-h-32"
@@ -268,13 +289,13 @@ export default function ContactPage() {
               onClick={handleCloseDialog}
               disabled={isGenerating}
             >
-              Cancelar
+              Cancel
             </Button>
             <Button
               onClick={handleGenerateAndSendEmail}
               disabled={isGenerating || !userPrompt.trim()}
             >
-              {isGenerating ? "Enviando..." : "Generar y Enviar"}
+              {isGenerating ? "Sending..." : "Generate and Send"}
             </Button>
           </DialogFooter>
         </DialogContent>

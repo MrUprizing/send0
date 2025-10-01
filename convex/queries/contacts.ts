@@ -1,20 +1,20 @@
+import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import { internalQuery, query } from "../_generated/server";
-import { paginationOptsValidator } from "convex/server";
 
 /**
  * Get paginated contacts for the current user
  */
 export const listContacts = query({
-  args: { 
+  args: {
     userId: v.string(),
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
     return await ctx.db
       .query("contacts")
-      .withIndex("by_user_id_and_created_at", (q) => 
-        q.eq("user_id", args.userId)
+      .withIndex("by_user_id_and_created_at", (q) =>
+        q.eq("user_id", args.userId),
       )
       .order("desc")
       .paginate(args.paginationOpts);

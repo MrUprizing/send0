@@ -1,8 +1,8 @@
 "use client";
+import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 
 export default function RootLayout({
   children,

@@ -79,7 +79,7 @@ export default function ContactPage() {
         form_id: "",
       });
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Error al enviar el contacto");
+      setError(err instanceof Error ? err.message : "Error sending contact");
     }
     setLoading(false);
   };
@@ -123,7 +123,7 @@ export default function ContactPage() {
             id="source_url"
             name="source_url"
             type="url"
-            placeholder="https://ejemplo.com"
+            placeholder="https://example.com"
             value={form.source_url}
             onChange={handleChange}
           />
@@ -135,7 +135,7 @@ export default function ContactPage() {
           <Textarea
             id="additional_info"
             name="additional_info"
-            placeholder="Escribe información relevante..."
+            placeholder="Write relevant information..."
             value={form.additional_info}
             onChange={handleChange}
             rows={3}
@@ -149,7 +149,7 @@ export default function ContactPage() {
             id="image_url"
             name="image_url"
             type="url"
-            placeholder="https://imagen.com/foto.jpg"
+            placeholder="https://image.com/photo.jpg"
             value={form.image_url}
             onChange={handleChange}
           />
@@ -160,7 +160,7 @@ export default function ContactPage() {
           </Label>
           <Select value={form.source_type} onValueChange={handleSelect}>
             <SelectTrigger>
-              <SelectValue placeholder="Selecciona el tipo" />
+              <SelectValue placeholder="Select type" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="newsletter">Newsletter</SelectItem>
@@ -170,7 +170,7 @@ export default function ContactPage() {
           </Select>
         </div>
         <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Enviando..." : "Enviar"}
+          {loading ? "Sending..." : "Send"}
         </Button>
         {success && (
           <p className="text-green-600 text-center mt-2">

@@ -1,6 +1,6 @@
 import { v } from "convex/values";
-import { mutation, internalMutation } from "../_generated/server";
 import { internal } from "../_generated/api";
+import { internalMutation, mutation } from "../_generated/server";
 
 /**
  * Create a new contact associated with a form and trigger AI profile generation.

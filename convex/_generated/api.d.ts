@@ -23,6 +23,8 @@ import type * as mutations_profile from "../mutations/profile.js";
 import type * as mutations_resend from "../mutations/resend.js";
 import type * as queries_aiprofile from "../queries/aiprofile.js";
 import type * as queries_contacts from "../queries/contacts.js";
+import type * as queries_dashboard from "../queries/dashboard.js";
+import type * as queries_forms from "../queries/forms.js";
 import type * as queries_mail from "../queries/mail.js";
 
 import type {
@@ -55,6 +57,8 @@ declare const fullApi: ApiFromModules<{
   "mutations/resend": typeof mutations_resend;
   "queries/aiprofile": typeof queries_aiprofile;
   "queries/contacts": typeof queries_contacts;
+  "queries/dashboard": typeof queries_dashboard;
+  "queries/forms": typeof queries_forms;
   "queries/mail": typeof queries_mail;
 }>;
 declare const fullApiWithMounts: typeof fullApi;

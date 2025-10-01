@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { internalQuery, query } from "../_generated/server";
+import { paginationOptsValidator } from "convex/server";
 
 /**
  * Query interna para obtener un mail por ID
@@ -156,5 +157,22 @@ export const getMailsByContactId = query({
       .collect();
 
     return mails;
+  },
+});
+
+/**
+ * Query paginada para obtener todos los emails del usuario
+ */
+export const listEmails = query({
+  args: {
+    userId: v.string(),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("mails")
+      .withIndex("by_user_id", (q) => q.eq("user_id", args.userId))
+      .order("desc")
+      .paginate(args.paginationOpts);
   },
 });

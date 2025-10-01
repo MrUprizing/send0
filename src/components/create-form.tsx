@@ -1,68 +1,85 @@
 "use client";
 import { useMutation } from "convex/react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "../../convex/_generated/api";
 
-export function CreateForm() {
+export function CreateFormDialog() {
   const createForm = useMutation(api.mutations.form.createForm);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-    setSuccess(null);
 
     try {
       const created_at = Date.now();
-      const formId = await createForm({
+      await createForm({
         name,
         description: description.length > 0 ? description : undefined,
         created_at,
       });
-      setSuccess(`Form created! ID: ${formId}`);
+      toast.success("Form created successfully!");
       setName("");
       setDescription("");
-    } catch (err: any) {
-      setError(err.message || "Error creating form");
+      setOpen(false);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Error creating form";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Card className="max-w-md mx-auto mt-8">
-      <CardHeader>
-        <CardTitle>Create a new form</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button>Create Form</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create a new form</DialogTitle>
+        </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            placeholder="Form name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-          <Textarea
-            placeholder="Description (optional)"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <Button type="submit" disabled={loading}>
+          <div className="space-y-2">
+            <Label htmlFor="name">Form Name</Label>
+            <Input
+              id="name"
+              placeholder="Enter form name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="description">Description (optional)</Label>
+            <Textarea
+              id="description"
+              placeholder="Enter form description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+          <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Creating..." : "Create Form"}
           </Button>
-          {success && <div className="text-green-600 mt-2">{success}</div>}
-          {error && <div className="text-red-600 mt-2">{error}</div>}
         </form>
-      </CardContent>
-    </Card>
+      </DialogContent>
+    </Dialog>
   );
 }

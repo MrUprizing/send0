@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, Rocket, type LucideIcon } from "lucide-react";
+import { ChevronRight, type LucideIcon, Rocket } from "lucide-react";
 
 import {
   Collapsible,

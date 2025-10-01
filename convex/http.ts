@@ -1,7 +1,7 @@
 import { httpRouter } from "convex/server";
+import { api } from "./_generated/api";
 import { httpAction } from "./_generated/server";
 import { authComponent, createAuth } from "./auth";
-import { api } from "./_generated/api";
 
 const http = httpRouter();
 
