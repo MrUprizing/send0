@@ -3,6 +3,7 @@ import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { UnauthenticatedState } from "@/components/auth/unauthenticated-state";
 
 export default function RootLayout({
   children,
@@ -11,7 +12,9 @@ export default function RootLayout({
 }>) {
   return (
     <ConvexClientProvider>
-      <Unauthenticated>Logged out</Unauthenticated>
+      <Unauthenticated>
+        <UnauthenticatedState />
+      </Unauthenticated>
       <Authenticated>
         <SidebarProvider>
           <AppSidebar />
