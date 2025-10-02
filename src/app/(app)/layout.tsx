@@ -4,7 +4,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { UnauthenticatedState } from "@/components/auth/unauthenticated-state";
-
+import { AuthLoadingComponent } from "@/components/auth/auth-loading";
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -21,7 +21,9 @@ export default function RootLayout({
           <SidebarInset>{children}</SidebarInset>
         </SidebarProvider>
       </Authenticated>
-      <AuthLoading>Loading...</AuthLoading>
+      <AuthLoading>
+        <AuthLoadingComponent />
+      </AuthLoading>
     </ConvexClientProvider>
   );
 }
